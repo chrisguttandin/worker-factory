@@ -9,4 +9,5 @@ export * from './receiver';
 export * from './request';
 export * from './value-map';
 export * from './worker-definition';
-export * from './worker-message';
+export * from './worker-error-message';
+export * from './worker-result-message';

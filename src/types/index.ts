@@ -4,3 +4,4 @@ export * from './transferable';
 export * from './value';
 export * from './worker-definition';
 export * from './worker-implementation';
+export * from './worker-message';

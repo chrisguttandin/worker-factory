@@ -6,6 +6,4 @@ export interface IErrorResponse {
 
     id: null;
 
-    result: null;
-
 }

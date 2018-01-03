@@ -6,6 +6,4 @@ export interface IErrorNotification {
 
     id: null;
 
-    result: null;
-
 }

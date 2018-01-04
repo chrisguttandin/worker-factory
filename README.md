@@ -1,5 +1,7 @@
 # worker-factory
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/chrisguttandin/worker-factory.svg)](https://greenkeeper.io/)
+
 **A little factory function to create a JSON-RPC based Web Worker implementation.**
 
 [![tests](https://img.shields.io/travis/chrisguttandin/worker-factory/master.svg?style=flat-square)](https://travis-ci.org/chrisguttandin/worker-factory)

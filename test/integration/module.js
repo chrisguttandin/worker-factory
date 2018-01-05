@@ -1,3 +1,5 @@
+import { spy } from 'sinon';
+
 describe('module', () => {
 
     let worker;
@@ -19,7 +21,7 @@ describe('module', () => {
             let ports;
 
             beforeEach(() => {
-                connectRequestId = 823;
+                connectRequestId = 723;
 
                 const messageChannel = new MessageChannel();
 
@@ -30,9 +32,11 @@ describe('module', () => {
                 this.timeout(6000);
 
                 worker.addEventListener('message', ({ data }) => {
+                    expect(data.result).to.be.a('number');
+
                     expect(data).to.deep.equal({
                         id: connectRequestId,
-                        result: null
+                        result: data.result
                     });
 
                     done();
@@ -52,14 +56,31 @@ describe('module', () => {
         describe('disconnect()', () => {
 
             let disconnectRequestId;
-            let ports;
+            let portId;
 
-            beforeEach(() => {
+            beforeEach((done) => {
+                const connectRequestId = 723;
+                const eventListener = ({ data }) => {
+                    worker.removeEventListener('message', eventListener);
+
+                    portId = data.result;
+
+                    done();
+                };
+                const messageChannel = new MessageChannel();
+                const ports = [ messageChannel.port1, messageChannel.port2 ];
+
                 disconnectRequestId = 823;
 
-                const messageChannel = new MessageChannel();
+                worker.addEventListener('message', eventListener);
 
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                worker.postMessage({
+                    id: connectRequestId,
+                    method: 'connect',
+                    params: { port: ports[0] }
+                }, [
+                    ports[0]
+                ]);
             });
 
             it('should disconnect a port', function (done) {
@@ -77,10 +98,8 @@ describe('module', () => {
                 worker.postMessage({
                     id: disconnectRequestId,
                     method: 'disconnect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                    params: { portId }
+                });
             });
 
         });
@@ -99,7 +118,7 @@ describe('module', () => {
             let ports;
 
             beforeEach(() => {
-                connectRequestId = 823;
+                connectRequestId = 723;
 
                 const messageChannel = new MessageChannel();
 
@@ -110,9 +129,11 @@ describe('module', () => {
                 this.timeout(6000);
 
                 worker.addEventListener('message', ({ data }) => {
+                    expect(data.result).to.be.a('number');
+
                     expect(data).to.deep.equal({
                         id: connectRequestId,
-                        result: null
+                        result: data.result
                     });
 
                     done();
@@ -145,9 +166,11 @@ describe('module', () => {
                 });
 
                 worker.addEventListener('message', ({ data }) => {
+                    expect(data.result).to.be.a('number');
+
                     expect(data).to.deep.equal({
                         id: connectRequestId,
-                        result: null
+                        result: data.result
                     });
 
                     ports[1].postMessage({
@@ -171,14 +194,32 @@ describe('module', () => {
         describe('disconnect()', () => {
 
             let disconnectRequestId;
+            let portId;
             let ports;
 
-            beforeEach(() => {
-                disconnectRequestId = 823;
+            beforeEach((done) => {
+                const connectRequestId = 723;
+                const eventListener = ({ data }) => {
+                    worker.removeEventListener('message', eventListener);
 
+                    portId = data.result;
+
+                    done();
+                };
                 const messageChannel = new MessageChannel();
 
+                disconnectRequestId = 823;
                 ports = [ messageChannel.port1, messageChannel.port2 ];
+
+                worker.addEventListener('message', eventListener);
+
+                worker.postMessage({
+                    id: connectRequestId,
+                    method: 'connect',
+                    params: { port: ports[0] }
+                }, [
+                    ports[0]
+                ]);
             });
 
             it('should disconnect a port', function (done) {
@@ -196,10 +237,45 @@ describe('module', () => {
                 worker.postMessage({
                     id: disconnectRequestId,
                     method: 'disconnect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                    params: { portId }
+                });
+            });
+
+            it('should not communicate via a disconnected port', function (done) {
+                this.timeout(6000);
+
+                const minuend = 178;
+                const portMessageListener = spy();
+                const subtractRequestId = 1982;
+                const subtrahend = 67;
+
+                ports[1].start();
+                ports[1].addEventListener('message', portMessageListener);
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: disconnectRequestId,
+                        result: null
+                    });
+
+                    ports[1].postMessage({
+                        id: subtractRequestId,
+                        method: 'subtract',
+                        params: { minuend, subtrahend }
+                    });
+
+                    setTimeout(() => {
+                        expect(portMessageListener).to.have.not.been.called;
+
+                        done();
+                    }, 1000);
+                });
+
+                worker.postMessage({
+                    id: disconnectRequestId,
+                    method: 'disconnect',
+                    params: { portId }
+                });
             });
 
         });

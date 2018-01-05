@@ -6,8 +6,14 @@ import { TWorkerImplementation } from './types';
 export * from './interfaces';
 export * from './types';
 
-export const createWorker = <T extends IWorkerDefinition>(receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => {
+export const createWorker = <T extends IWorkerDefinition>(
+    receiver: IReceiver,
+    workerImplementation: TWorkerImplementation<T>
+): () => void => {
     const fullWorkerImplementation = extendWorkerImplementation<T>(createWorker, workerImplementation);
+    const messageHandler = createMessageHandler(receiver, fullWorkerImplementation);
 
-    receiver.addEventListener('message', createMessageHandler(receiver, fullWorkerImplementation));
+    receiver.addEventListener('message', messageHandler);
+
+    return () => receiver.removeEventListener('message', messageHandler);
 };

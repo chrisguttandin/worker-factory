@@ -12,7 +12,7 @@ export interface IDefaultWorkerDefinition extends IWorkerDefinition {
 
         response: {
 
-            result: null;
+            result: number;
 
         };
 
@@ -22,7 +22,7 @@ export interface IDefaultWorkerDefinition extends IWorkerDefinition {
 
         params: {
 
-            port: MessagePort;
+            portId: number;
 
         };
 

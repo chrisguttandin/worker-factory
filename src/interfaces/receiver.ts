@@ -4,4 +4,6 @@ export interface IReceiver {
 
     postMessage: typeof postMessage;
 
+    removeEventListener: typeof removeEventListener;
+
 }

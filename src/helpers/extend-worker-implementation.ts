@@ -1,8 +1,11 @@
+import { generateUniqueNumber } from 'fast-unique-numbers';
 import { IDefaultWorkerDefinition, IReceiver, IWorkerDefinition } from '../interfaces';
 import { TWorkerImplementation } from '../types';
 
+const CLEAN_UP_FUNCTIONS: Map<number, () => void> = new Map();
+
 export const extendWorkerImplementation = <T extends IWorkerDefinition>(
-    createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => void,
+    createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => () => void,
     partialWorkerImplementation: TWorkerImplementation<T>
 ): TWorkerImplementation<T & IDefaultWorkerDefinition> => {
     // @todo The spread operator can't be used here because TypeScript does not believe that partialWorkerImplementation is an object.
@@ -10,14 +13,25 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
         connect: ({ port }) => {
             port.start();
 
-            createWorker(port, partialWorkerImplementation);
+            const destroyWorker = createWorker(port, partialWorkerImplementation);
+            const portId = generateUniqueNumber(CLEAN_UP_FUNCTIONS);
 
-            return { result: null };
+            CLEAN_UP_FUNCTIONS.set(portId, () => {
+                destroyWorker();
+                port.close();
+                CLEAN_UP_FUNCTIONS.delete(portId);
+            });
+
+            return { result: portId };
         },
-        disconnect: ({ port }) => {
-            port.close();
+        disconnect: ({ portId }) => {
+            const cleanUp = CLEAN_UP_FUNCTIONS.get(portId);
 
-            // @todo Delete the eventhandler.
+            if (cleanUp === undefined) {
+                throw new Error('T-O-D-O');
+            }
+
+            cleanUp();
 
             return { result: null };
         }

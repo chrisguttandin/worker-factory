@@ -1,6 +1,7 @@
 import { generateUniqueNumber } from 'fast-unique-numbers';
 import { IDefaultWorkerDefinition, IReceiver, IWorkerDefinition } from '../interfaces';
 import { TWorkerImplementation } from '../types';
+import { renderUnknownPortIdError } from './error-renderers';
 
 const CLEAN_UP_FUNCTIONS: Map<number, () => void> = new Map();
 
@@ -28,7 +29,7 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
             const cleanUp = CLEAN_UP_FUNCTIONS.get(portId);
 
             if (cleanUp === undefined) {
-                throw new Error('T-O-D-O');
+                throw renderUnknownPortIdError({ portId: portId.toString() });
             }
 
             cleanUp();

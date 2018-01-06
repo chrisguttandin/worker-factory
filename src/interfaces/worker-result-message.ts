@@ -4,6 +4,6 @@ export interface IWorkerResultMessage {
 
     id: null | number;
 
-    result: TValue;
+    result: TValue | TValue[] | TValue[][];
 
 }

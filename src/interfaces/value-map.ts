@@ -2,6 +2,6 @@ import { TValue } from '../types';
 
 export interface IValueMap {
 
-    [ key: string ]: TValue | TValue[];
+    [ key: string ]: TValue | TValue[] | TValue[][];
 
 }

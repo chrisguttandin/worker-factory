@@ -17,6 +17,7 @@ module.exports = {
     ],
     test: [
         'karma:test-integration',
-        'karma:test-unit'
+        'karma:test-unit',
+        'karma:test-expectation-safari'
     ]
 };

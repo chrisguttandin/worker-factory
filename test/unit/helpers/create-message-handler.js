@@ -19,7 +19,7 @@ describe('createMessageHandler', () => {
         let messageHandler;
 
         beforeEach(() => {
-            messageHandler = createMessageHandler(receiver, { });
+            messageHandler = createMessageHandler(receiver, { }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -51,7 +51,7 @@ describe('createMessageHandler', () => {
                     // This message will throw an anonymous error to test the behaviour in case of an unexpected error.
                     throw new Error('This is a random error message.');
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -101,7 +101,7 @@ describe('createMessageHandler', () => {
 
                     return { result: undefined };
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -144,7 +144,7 @@ describe('createMessageHandler', () => {
 
                     return { result: 'anything' };
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -197,7 +197,7 @@ describe('createMessageHandler', () => {
 
                     return { result: 'anything', transferables: [ 'anything' ] };
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -219,14 +219,55 @@ describe('createMessageHandler', () => {
 
         describe('with a known message', () => {
 
-            it('should call postMessage with the result', () => {
+            it('should call postMessage with the result', (done) => {
                 messageHandler({ data: { id, method: 'respond' } });
 
-                expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
-                    id,
-                    result: 'anything'
-                }, [ 'anything' ]);
+                setTimeout(() => {
+                    expect(receiver.postMessage).to.have.been.calledOnce;
+                    expect(receiver.postMessage).to.have.been.calledWithExactly({
+                        id,
+                        result: 'anything'
+                    }, [ 'anything' ]);
+
+                    done();
+                });
+            });
+
+        });
+
+    });
+
+    describe('with a synchronous request implementation and no transferable support', () => {
+
+        let id;
+        let messageHandler;
+
+        beforeEach(() => {
+            id = 982;
+
+            messageHandler = createMessageHandler(receiver, {
+                respond: () => {
+                    // Return an expected result.
+
+                    return { result: 'anything', transferables: [ 'anything' ] };
+                }
+            }, Promise.resolve(false));
+        });
+
+        describe('with a known message', () => {
+
+            it('should call postMessage with the result', (done) => {
+                messageHandler({ data: { id, method: 'respond' } });
+
+                setTimeout(() => {
+                    expect(receiver.postMessage).to.have.been.calledOnce;
+                    expect(receiver.postMessage).to.have.been.calledWithExactly({
+                        id,
+                        result: 'anything'
+                    }, [ ]);
+
+                    done();
+                });
             });
 
         });
@@ -247,7 +288,7 @@ describe('createMessageHandler', () => {
 
                     return Promise.resolve({ result: 'anything', transferables: [ 'anything' ] });
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -287,6 +328,43 @@ describe('createMessageHandler', () => {
 
     });
 
+    describe('with an asynchronous request implementation and no transferable support', () => {
+
+        let id;
+        let messageHandler;
+
+        beforeEach(() => {
+            id = 982;
+
+            messageHandler = createMessageHandler(receiver, {
+                delay: () => {
+                    // Return an expected result wrapped in a promise.
+
+                    return Promise.resolve({ result: 'anything', transferables: [ 'anything' ] });
+                }
+            }, Promise.resolve(false));
+        });
+
+        describe('with a known message', () => {
+
+            it('should call postMessage with the result', (done) => {
+                messageHandler({ data: { id, method: 'delay' } });
+
+                setTimeout(() => {
+                    expect(receiver.postMessage).to.have.been.calledOnce;
+                    expect(receiver.postMessage).to.have.been.calledWithExactly({
+                        id,
+                        result: 'anything'
+                    }, [ ]);
+
+                    done();
+                });
+            });
+
+        });
+
+    });
+
     describe('with a synchronous but silent request implementation', () => {
 
         let id;
@@ -301,7 +379,7 @@ describe('createMessageHandler', () => {
 
                     return { result: undefined };
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {
@@ -354,7 +432,7 @@ describe('createMessageHandler', () => {
 
                     return Promise.resolve({ result: undefined });
                 }
-            });
+            }, Promise.resolve(true));
         });
 
         describe('with an unknown message', () => {

@@ -3,7 +3,11 @@ import { IBrokerEvent, IErrorNotification, IErrorResponse, IReceiver, IRequest, 
 import { TWorkerImplementation } from '../types';
 import { renderMethodNotFoundError, renderMissingResponseError, renderUnexpectedResultError } from './error-renderers';
 
-export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => {
+export const createMessageHandler = <T extends IWorkerDefinition>(
+    receiver: IReceiver,
+    workerImplementation: TWorkerImplementation<T>,
+    isSupportingTransferables: Promise<boolean>
+) => {
     return async ({ data: { id, method, params } }: IBrokerEvent<T>) => {
         const messageHandler = workerImplementation[method];
 
@@ -31,7 +35,7 @@ export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IRec
 
                 const { result, transferables = [ ] } = <IRequest['response']> asynchronousResponse;
 
-                receiver.postMessage({ id, result }, transferables);
+                receiver.postMessage({ id, result }, (await isSupportingTransferables) ? transferables : [ ]);
             } else {
                 if (response.result === undefined) {
                     throw renderUnexpectedResultError({ method });
@@ -39,7 +43,7 @@ export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IRec
 
                 const { result, transferables = [ ] } = <IRequest['response']> response;
 
-                receiver.postMessage({ id, result }, transferables);
+                receiver.postMessage({ id, result }, (await isSupportingTransferables) ? transferables : [ ]);
             }
         } catch (err) {
             const { message, status = -32603 } = <IAugmentedError> err;

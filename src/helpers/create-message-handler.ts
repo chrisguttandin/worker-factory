@@ -22,26 +22,18 @@ export const createMessageHandler = <T extends IWorkerDefinition>(
                 throw renderMissingResponseError({ method });
             }
 
+            const synchronousResponse = (response instanceof Promise) ? await response : response;
+
             if (id === null) {
-                if (response.result !== undefined) {
+                if (synchronousResponse.result !== undefined) {
                     throw renderUnexpectedResultError({ method });
                 }
-            } else if (response instanceof Promise) {
-                const asynchronousResponse = await response;
-
-                if (asynchronousResponse.result === undefined) {
-                    throw renderUnexpectedResultError({ method });
-                }
-
-                const { result, transferables = [ ] } = <IRequest['response']> asynchronousResponse;
-
-                receiver.postMessage({ id, result }, (await isSupportingTransferables) ? transferables : [ ]);
             } else {
-                if (response.result === undefined) {
+                if (synchronousResponse.result === undefined) {
                     throw renderUnexpectedResultError({ method });
                 }
 
-                const { result, transferables = [ ] } = <IRequest['response']> response;
+                const { result, transferables = [ ] } = <IRequest['response']> synchronousResponse;
 
                 receiver.postMessage({ id, result }, (await isSupportingTransferables) ? transferables : [ ]);
             }

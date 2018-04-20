@@ -1,6 +1,6 @@
 import { createMessageHandler } from './helpers/create-message-handler';
 import { extendWorkerImplementation } from './helpers/extend-worker-implementation';
-import { isSupportingTransferables } from './helpers/is-supporting-promises';
+import { isSupportingTransferables } from './helpers/is-supporting-transferables';
 import { IReceiver, IWorkerDefinition } from './interfaces';
 import { TWorkerImplementation } from './types';
 

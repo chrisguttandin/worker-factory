@@ -4,8 +4,8 @@ export interface IBrokerMessage<T extends IWorkerDefinition> {
 
     id: null | number;
 
-    method: keyof T;
+    method: Extract<keyof T, string>;
 
-    params: T[keyof T]['params'];
+    params: T[Extract<keyof T, string>]['params'];
 
 }

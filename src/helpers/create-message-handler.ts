@@ -13,24 +13,28 @@ export const createMessageHandler = <T extends IWorkerDefinition>(
 
         try {
             if (messageHandler === undefined) {
-                throw renderMethodNotFoundError({ method });
+                // @todo The variable method is of type keyof T which is actually a string but TypeScript (v2.9.1) doesn't accept that.
+                throw renderMethodNotFoundError({ method: <string> method });
             }
 
             const response = messageHandler(params);
 
             if (response === undefined) {
-                throw renderMissingResponseError({ method });
+                // @todo The variable method is of type keyof T which is actually a string but TypeScript (v2.9.1) doesn't accept that.
+                throw renderMissingResponseError({ method: <string> method });
             }
 
             const synchronousResponse = (response instanceof Promise) ? await response : response;
 
             if (id === null) {
                 if (synchronousResponse.result !== undefined) {
-                    throw renderUnexpectedResultError({ method });
+                    // @todo The variable method is of type keyof T which is actually a string but TypeScript (v2.9.1) doesn't accept that.
+                    throw renderUnexpectedResultError({ method: <string> method });
                 }
             } else {
                 if (synchronousResponse.result === undefined) {
-                    throw renderUnexpectedResultError({ method });
+                    // @todo The variable method is of type keyof T which is actually a string but TypeScript (v2.9.1) doesn't accept that.
+                    throw renderUnexpectedResultError({ method: <string> method });
                 }
 
                 const { result, transferables = [ ] } = <IRequest['response']> synchronousResponse;

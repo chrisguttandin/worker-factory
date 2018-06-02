@@ -17,7 +17,7 @@
   "description": "A little factory function to create a JSON-RPC based Web Worker implementation.",
   "devDependencies": {
     "@commitlint/cli": "^7.0.0",
-    "@commitlint/config-angular": "^7.0.0",
+    "@commitlint/config-angular": "^7.0.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-external-helpers": "^6.22.0",

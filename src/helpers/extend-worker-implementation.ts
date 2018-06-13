@@ -1,12 +1,12 @@
 import { generateUniqueNumber } from 'fast-unique-numbers';
 import { IDefaultWorkerDefinition, IReceiver, IWorkerDefinition } from '../interfaces';
-import { TWorkerImplementation } from '../types';
+import { TDestroyWorkerFunction, TWorkerImplementation } from '../types';
 import { renderUnknownPortIdError } from './error-renderers';
 
-const CLEAN_UP_FUNCTIONS: Map<number, () => void> = new Map();
+const DESTROY_WORKER_FUNCTIONS: Map<number, TDestroyWorkerFunction> = new Map();
 
 export const extendWorkerImplementation = <T extends IWorkerDefinition>(
-    createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => () => void,
+    createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => TDestroyWorkerFunction,
     partialWorkerImplementation: TWorkerImplementation<T>
 ): TWorkerImplementation<T & IDefaultWorkerDefinition> => {
     // @todo The spread operator can't be used here because TypeScript does not believe that partialWorkerImplementation is an object.
@@ -15,24 +15,24 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
             port.start();
 
             const destroyWorker = createWorker(port, partialWorkerImplementation);
-            const portId = generateUniqueNumber(CLEAN_UP_FUNCTIONS);
+            const portId = generateUniqueNumber(DESTROY_WORKER_FUNCTIONS);
 
-            CLEAN_UP_FUNCTIONS.set(portId, () => {
+            DESTROY_WORKER_FUNCTIONS.set(portId, () => {
                 destroyWorker();
                 port.close();
-                CLEAN_UP_FUNCTIONS.delete(portId);
+                DESTROY_WORKER_FUNCTIONS.delete(portId);
             });
 
             return { result: portId };
         },
         disconnect: ({ portId }) => {
-            const cleanUp = CLEAN_UP_FUNCTIONS.get(portId);
+            const destroyWorker = DESTROY_WORKER_FUNCTIONS.get(portId);
 
-            if (cleanUp === undefined) {
+            if (destroyWorker === undefined) {
                 throw renderUnknownPortIdError({ portId: portId.toString() });
             }
 
-            cleanUp();
+            destroyWorker();
 
             return { result: null };
         }

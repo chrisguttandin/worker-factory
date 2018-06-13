@@ -1,3 +1,4 @@
+export * from './destroy-worker-function';
 export * from './message';
 export * from './message-receiver';
 export * from './transferable';

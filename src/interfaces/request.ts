@@ -3,7 +3,7 @@ import { IValueMap } from './value-map';
 
 export interface IRequest {
 
-    params: IValueMap | TValue[];
+    params?: IValueMap | TValue[];
 
     response: {
 

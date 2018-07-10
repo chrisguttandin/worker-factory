@@ -460,4 +460,174 @@ describe('module', () => {
 
     });
 
+    describe('with an additional implementation without any params', () => {
+
+        beforeEach(() => {
+            worker = new Worker('base/test/fixtures/constant-worker.js');
+        });
+
+        describe('connect()', () => {
+
+            let connectRequestId;
+            let ports;
+
+            beforeEach(() => {
+                connectRequestId = 723;
+
+                const messageChannel = new MessageChannel();
+
+                ports = [ messageChannel.port1, messageChannel.port2 ];
+            });
+
+            it('should connect a port', function (done) {
+                this.timeout(6000);
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data.result).to.be.a('number');
+
+                    expect(data).to.deep.equal({
+                        id: connectRequestId,
+                        result: data.result
+                    });
+
+                    done();
+                });
+
+                worker.postMessage({
+                    id: connectRequestId,
+                    method: 'connect',
+                    params: { port: ports[0] }
+                }, [
+                    ports[0]
+                ]);
+            });
+
+            it('should communicate via a connected port', function (done) {
+                this.timeout(6000);
+
+                const askRequestId = 1982;
+
+                ports[1].start();
+                ports[1].addEventListener('message', ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: askRequestId,
+                        result: 42
+                    });
+
+                    done();
+                });
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data.result).to.be.a('number');
+
+                    expect(data).to.deep.equal({
+                        id: connectRequestId,
+                        result: data.result
+                    });
+
+                    ports[1].postMessage({
+                        id: askRequestId,
+                        method: 'ask'
+                    });
+                });
+
+                worker.postMessage({
+                    id: connectRequestId,
+                    method: 'connect',
+                    params: { port: ports[0] }
+                }, [
+                    ports[0]
+                ]);
+            });
+
+        });
+
+        describe('disconnect()', () => {
+
+            let disconnectRequestId;
+            let portId;
+            let ports;
+
+            beforeEach((done) => {
+                const connectRequestId = 723;
+                const eventListener = ({ data }) => {
+                    worker.removeEventListener('message', eventListener);
+
+                    portId = data.result;
+
+                    done();
+                };
+                const messageChannel = new MessageChannel();
+
+                disconnectRequestId = 823;
+                ports = [ messageChannel.port1, messageChannel.port2 ];
+
+                worker.addEventListener('message', eventListener);
+
+                worker.postMessage({
+                    id: connectRequestId,
+                    method: 'connect',
+                    params: { port: ports[0] }
+                }, [
+                    ports[0]
+                ]);
+            });
+
+            it('should disconnect a port', function (done) {
+                this.timeout(6000);
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: disconnectRequestId,
+                        result: null
+                    });
+
+                    done();
+                });
+
+                worker.postMessage({
+                    id: disconnectRequestId,
+                    method: 'disconnect',
+                    params: { portId }
+                });
+            });
+
+            it('should not communicate via a disconnected port', function (done) {
+                this.timeout(6000);
+
+                const askRequestId = 1982;
+                const portMessageListener = spy();
+
+                ports[1].start();
+                ports[1].addEventListener('message', portMessageListener);
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: disconnectRequestId,
+                        result: null
+                    });
+
+                    ports[1].postMessage({
+                        id: askRequestId,
+                        method: 'ask'
+                    });
+
+                    setTimeout(() => {
+                        expect(portMessageListener).to.have.not.been.called;
+
+                        done();
+                    }, 1000);
+                });
+
+                worker.postMessage({
+                    id: disconnectRequestId,
+                    method: 'disconnect',
+                    params: { portId }
+                });
+            });
+
+        });
+
+    });
+
 });

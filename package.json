@@ -11,7 +11,7 @@
   "dependencies": {
     "babel-runtime": "^6.26.0",
     "compilerr": "^5.0.6",
-    "fast-unique-numbers": "^2.1.0",
+    "fast-unique-numbers": "^2.1.1",
     "tslib": "^1.9.3"
   },
   "description": "A little factory function to create a JSON-RPC based Web Worker implementation.",

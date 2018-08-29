@@ -9,7 +9,7 @@
     }
   },
   "dependencies": {
-    "compilerr": "^5.0.6",
+    "compilerr": "^5.0.7",
     "fast-unique-numbers": "^2.1.1",
     "tslib": "^1.9.3"
   },

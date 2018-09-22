@@ -13,7 +13,7 @@ describe('extendWorkerImplementation', () => {
         it('should return the default implementation', () => {
             const fullWorkerImplementation = extendWorkerImplementation(createWorker, { });
 
-            expect(fullWorkerImplementation).to.have.keys([ 'connect', 'disconnect' ]);
+            expect(fullWorkerImplementation).to.have.keys([ 'connect', 'disconnect', 'isSupported' ]);
         });
 
     });
@@ -23,7 +23,7 @@ describe('extendWorkerImplementation', () => {
         it('should return the extended implementation', () => {
             const fullWorkerImplementation = extendWorkerImplementation(createWorker, { subtract: () => {} });
 
-            expect(fullWorkerImplementation).to.have.keys([ 'connect', 'disconnect', 'subtract' ]);
+            expect(fullWorkerImplementation).to.have.keys([ 'connect', 'disconnect', 'isSupported', 'subtract' ]);
         });
 
     });

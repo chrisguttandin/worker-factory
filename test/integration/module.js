@@ -104,6 +104,34 @@ describe('module', () => {
 
         });
 
+        describe('isSupported()', () => {
+
+            let isSupportedRequestId;
+
+            beforeEach(() => {
+                isSupportedRequestId = 2123;
+            });
+
+            it('should return true', function (done) {
+                this.timeout(6000);
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: isSupportedRequestId,
+                        result: true
+                    });
+
+                    done();
+                });
+
+                worker.postMessage({
+                    id: isSupportedRequestId,
+                    method: 'isSupported'
+                });
+            });
+
+        });
+
     });
 
     describe('with an additional implementation of a subtraction', () => {
@@ -623,6 +651,42 @@ describe('module', () => {
                     id: disconnectRequestId,
                     method: 'disconnect',
                     params: { portId }
+                });
+            });
+
+        });
+
+    });
+
+    describe('with an additional implementation with an unsupported worker', () => {
+
+        beforeEach(() => {
+            worker = new Worker('base/test/fixtures/unsupported-worker.js');
+        });
+
+        describe('isSupported()', () => {
+
+            let isSupportedRequestId;
+
+            beforeEach(() => {
+                isSupportedRequestId = 2123;
+            });
+
+            it('should return a false', function (done) {
+                this.timeout(6000);
+
+                worker.addEventListener('message', ({ data }) => {
+                    expect(data).to.deep.equal({
+                        id: isSupportedRequestId,
+                        result: false
+                    });
+
+                    done();
+                });
+
+                worker.postMessage({
+                    id: isSupportedRequestId,
+                    method: 'isSupported'
                 });
             });
 

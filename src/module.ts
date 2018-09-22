@@ -9,12 +9,15 @@ export * from './types';
 
 export const createWorker = <T extends IWorkerDefinition>(
     receiver: IReceiver,
-    workerImplementation: TWorkerImplementation<T>
+    workerImplementation: TWorkerImplementation<T>,
+    isSupportedFunction: () => boolean | Promise<boolean> = () => true
 ): TDestroyWorkerFunction => {
-    const fullWorkerImplementation = extendWorkerImplementation<T>(createWorker, workerImplementation);
-    const messageHandler = createMessageHandler(receiver, fullWorkerImplementation, isSupportingTransferables);
+    const fullWorkerImplementation = extendWorkerImplementation<T>(createWorker, workerImplementation, isSupportedFunction);
+    const messageHandler = createMessageHandler(receiver, fullWorkerImplementation);
 
     receiver.addEventListener('message', messageHandler);
 
     return () => receiver.removeEventListener('message', messageHandler);
 };
+
+export { isSupportingTransferables as isSupported };

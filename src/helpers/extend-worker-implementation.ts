@@ -2,12 +2,14 @@ import { generateUniqueNumber } from 'fast-unique-numbers';
 import { IDefaultWorkerDefinition, IReceiver, IWorkerDefinition } from '../interfaces';
 import { TDestroyWorkerFunction, TWorkerImplementation } from '../types';
 import { renderUnknownPortIdError } from './error-renderers';
+import { isSupportingTransferables } from './is-supporting-transferables';
 
 const DESTROY_WORKER_FUNCTIONS: Map<number, TDestroyWorkerFunction> = new Map();
 
 export const extendWorkerImplementation = <T extends IWorkerDefinition>(
     createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => TDestroyWorkerFunction,
-    partialWorkerImplementation: TWorkerImplementation<T>
+    partialWorkerImplementation: TWorkerImplementation<T>,
+    isSupportedFunction: () => boolean | Promise<boolean>
 ): TWorkerImplementation<T & IDefaultWorkerDefinition> => {
     return <TWorkerImplementation<T & IDefaultWorkerDefinition>> {
         // @todo TypeScript does not believe that partialWorkerImplementation is an object.
@@ -36,6 +38,19 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
             destroyWorker();
 
             return { result: null };
+        },
+        // @todo It should be okay to define a function without a parameter if it doesn't need one.
+        isSupported: async (_) => {
+            const isSelfSupported = await isSupportingTransferables();
+
+            if (isSelfSupported) {
+                const result = isSupportedFunction();
+                const synchronousResult = (result instanceof Promise) ? await result : result;
+
+                return { result: synchronousResult };
+            }
+
+            return { result: false };
         }
     };
 };

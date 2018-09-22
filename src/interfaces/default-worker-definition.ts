@@ -34,4 +34,14 @@ export interface IDefaultWorkerDefinition extends IWorkerDefinition {
 
     };
 
+    isSupported: {
+
+        response: {
+
+            result: boolean;
+
+        };
+
+    };
+
 }

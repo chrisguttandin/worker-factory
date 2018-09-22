@@ -5,8 +5,7 @@ import { renderMethodNotFoundError, renderMissingResponseError, renderUnexpected
 
 export const createMessageHandler = <T extends IWorkerDefinition>(
     receiver: IReceiver,
-    workerImplementation: TWorkerImplementation<T>,
-    isSupportingTransferables: Promise<boolean>
+    workerImplementation: TWorkerImplementation<T>
 ) => {
     return async ({ data: { id, method, params } }: IBrokerEvent<T>) => {
         const messageHandler = workerImplementation[method];
@@ -35,7 +34,7 @@ export const createMessageHandler = <T extends IWorkerDefinition>(
 
                 const { result, transferables = [ ] } = <IRequest['response']> synchronousResponse;
 
-                receiver.postMessage({ id, result }, (await isSupportingTransferables) ? transferables : [ ]);
+                receiver.postMessage({ id, result }, transferables);
             }
         } catch (err) {
             const { message, status = -32603 } = <IAugmentedError> err;

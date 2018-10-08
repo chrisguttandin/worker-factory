@@ -39,8 +39,7 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
 
             return { result: null };
         },
-        // @todo It should be okay to define a function without a parameter if it doesn't need one.
-        isSupported: async (_) => {
+        isSupported: async () => {
             const isSelfSupported = await isSupportingTransferables();
 
             if (isSelfSupported) {

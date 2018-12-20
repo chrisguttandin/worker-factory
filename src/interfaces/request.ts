@@ -9,7 +9,7 @@ export interface IRequest {
 
         result: TValue;
 
-        transferables?: TTransferable[]
+        transferables?: TTransferable[];
 
     };
 

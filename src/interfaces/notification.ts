@@ -1,4 +1,4 @@
-import { TTransferable, TValue } from '../types';
+import { TValue } from '../types';
 
 export interface INotification {
 
@@ -10,6 +10,6 @@ export interface INotification {
 
     };
 
-    transferables?: TTransferable[];
+    transferables?: Transferable[];
 
 }

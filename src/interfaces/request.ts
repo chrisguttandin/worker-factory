@@ -1,4 +1,4 @@
-import { TTransferable, TValue } from '../types';
+import { TValue } from '../types';
 import { IValueMap } from './value-map';
 
 export interface IRequest {
@@ -9,10 +9,10 @@ export interface IRequest {
 
         result: TValue;
 
-        transferables?: TTransferable[];
+        transferables?: Transferable[];
 
     };
 
-    transferables?: TTransferable[];
+    transferables?: Transferable[];
 
 }

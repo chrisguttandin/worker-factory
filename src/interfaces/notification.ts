@@ -6,7 +6,7 @@ export interface INotification {
 
     response: {
 
-        result: void;
+        result: undefined;
 
     };
 

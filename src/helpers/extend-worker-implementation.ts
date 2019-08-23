@@ -10,46 +10,43 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
     createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => TDestroyWorkerFunction,
     partialWorkerImplementation: TWorkerImplementation<T>,
     isSupportedFunction: () => boolean | Promise<boolean>
-): TWorkerImplementation<T & IDefaultWorkerDefinition> => {
-    return <TWorkerImplementation<T & IDefaultWorkerDefinition>> {
-        // @todo TypeScript does not believe that partialWorkerImplementation is an object.
-        ...(partialWorkerImplementation as object),
-        connect: ({ port }) => {
-            port.start();
+): TWorkerImplementation<T & IDefaultWorkerDefinition> => ({
+    ...partialWorkerImplementation,
+    connect: ({ port }) => {
+        port.start();
 
-            const destroyWorker = createWorker(port, partialWorkerImplementation);
-            const portId = generateUniqueNumber(DESTROY_WORKER_FUNCTIONS);
+        const destroyWorker = createWorker(port, partialWorkerImplementation);
+        const portId = generateUniqueNumber(DESTROY_WORKER_FUNCTIONS);
 
-            DESTROY_WORKER_FUNCTIONS.set(portId, () => {
-                destroyWorker();
-                port.close();
-                DESTROY_WORKER_FUNCTIONS.delete(portId);
-            });
-
-            return { result: portId };
-        },
-        disconnect: ({ portId }) => {
-            const destroyWorker = DESTROY_WORKER_FUNCTIONS.get(portId);
-
-            if (destroyWorker === undefined) {
-                throw renderUnknownPortIdError({ portId: portId.toString() });
-            }
-
+        DESTROY_WORKER_FUNCTIONS.set(portId, () => {
             destroyWorker();
+            port.close();
+            DESTROY_WORKER_FUNCTIONS.delete(portId);
+        });
 
-            return { result: null };
-        },
-        isSupported: async () => {
-            const isSelfSupported = await isSupportingTransferables();
+        return { result: portId };
+    },
+    disconnect: ({ portId }) => {
+        const destroyWorker = DESTROY_WORKER_FUNCTIONS.get(portId);
 
-            if (isSelfSupported) {
-                const result = isSupportedFunction();
-                const synchronousResult = (result instanceof Promise) ? await result : result;
-
-                return { result: synchronousResult };
-            }
-
-            return { result: false };
+        if (destroyWorker === undefined) {
+            throw renderUnknownPortIdError({ portId: portId.toString() });
         }
-    };
-};
+
+        destroyWorker();
+
+        return { result: null };
+    },
+    isSupported: async () => {
+        const isSelfSupported = await isSupportingTransferables();
+
+        if (isSelfSupported) {
+            const result = isSupportedFunction();
+            const synchronousResult = (result instanceof Promise) ? await result : result;
+
+            return { result: synchronousResult };
+        }
+
+        return { result: false };
+    }
+});

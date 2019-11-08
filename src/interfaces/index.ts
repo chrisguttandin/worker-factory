@@ -7,8 +7,6 @@ export * from './error-response';
 export * from './notification';
 export * from './receiver';
 export * from './request';
-export * from './value-array';
-export * from './value-map';
 export * from './worker-definition';
 export * from './worker-error-message';
 export * from './worker-result-message';

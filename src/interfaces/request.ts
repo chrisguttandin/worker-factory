@@ -1,9 +1,8 @@
 import { TValue } from '../types';
-import { IValueMap } from './value-map';
 
 export interface IRequest {
 
-    params?: IValueMap | TValue[];
+    params?: TValue[] | { [ key: string ]: TValue };
 
     response: {
 

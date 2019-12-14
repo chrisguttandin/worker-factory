@@ -4,8 +4,12 @@ import { isSupportingTransferables } from './helpers/is-supporting-transferables
 import { IReceiver, IWorkerDefinition } from './interfaces';
 import { TDestroyWorkerFunction, TWorkerImplementation } from './types';
 
-export * from './interfaces';
-export * from './types';
+/*
+ * @todo Explicitly referencing the barrel file seems to be necessary when enabling the
+ * isolatedModules compiler option.
+ */
+export * from './interfaces/index';
+export * from './types/index';
 
 export const createWorker = <T extends IWorkerDefinition>(
     receiver: IReceiver,

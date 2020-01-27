@@ -1,4 +1,5 @@
 module.exports = (grunt) => {
+    const continuous = (grunt.option('continuous') === true);
     const fix = (grunt.option('fix') === true);
 
     return {
@@ -18,10 +19,10 @@ module.exports = (grunt) => {
             cmd: `eslint --config config/eslint/test.json ${ (fix) ? '--fix ' : '' }--report-unused-disable-directives test/**/*.js`
         },
         'test-integration': {
-            cmd: 'karma start config/karma/config-integration.js --single-run'
+            cmd: `karma start config/karma/config-integration.js ${ continuous ? '--concurrency Infinity' : '--single-run' }`
         },
         'test-unit': {
-            cmd: 'karma start config/karma/config-unit.js --single-run'
+            cmd: `karma start config/karma/config-unit.js ${ continuous ? '--concurrency Infinity' : '--single-run' }`
         }
     };
 };

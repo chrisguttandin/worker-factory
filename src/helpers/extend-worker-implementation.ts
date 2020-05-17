@@ -10,7 +10,7 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
     createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => TDestroyWorkerFunction,
     partialWorkerImplementation: TWorkerImplementation<T>,
     isSupportedFunction: () => boolean | Promise<boolean>
-): TWorkerImplementation<T & IDefaultWorkerDefinition> => ({
+): TWorkerImplementation<T> & TWorkerImplementation<IDefaultWorkerDefinition> => ({
     ...partialWorkerImplementation,
     connect: ({ port }) => {
         port.start();

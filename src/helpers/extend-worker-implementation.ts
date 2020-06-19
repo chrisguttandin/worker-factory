@@ -42,7 +42,7 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
 
         if (isSelfSupported) {
             const result = isSupportedFunction();
-            const synchronousResult = (result instanceof Promise) ? await result : result;
+            const synchronousResult = result instanceof Promise ? await result : result;
 
             return { result: synchronousResult };
         }

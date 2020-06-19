@@ -1,7 +1,6 @@
 import { spy } from 'sinon';
 
 describe('module', () => {
-
     let worker;
 
     after((done) => {
@@ -10,13 +9,11 @@ describe('module', () => {
     });
 
     describe('with the default implementation', () => {
-
         beforeEach(() => {
             worker = new Worker('base/test/fixtures/default-worker.js');
         });
 
         describe('connect()', () => {
-
             let connectRequestId;
             let ports;
 
@@ -25,7 +22,7 @@ describe('module', () => {
 
                 const messageChannel = new MessageChannel();
 
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
             });
 
             it('should connect a port', function (done) {
@@ -42,19 +39,18 @@ describe('module', () => {
                     done();
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
-
         });
 
         describe('disconnect()', () => {
-
             let disconnectRequestId;
             let portId;
 
@@ -68,19 +64,20 @@ describe('module', () => {
                     done();
                 };
                 const messageChannel = new MessageChannel();
-                const ports = [ messageChannel.port1, messageChannel.port2 ];
+                const ports = [messageChannel.port1, messageChannel.port2];
 
                 disconnectRequestId = 823;
 
                 worker.addEventListener('message', eventListener);
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should disconnect a port', function (done) {
@@ -101,11 +98,9 @@ describe('module', () => {
                     params: { portId }
                 });
             });
-
         });
 
         describe('isSupported()', () => {
-
             let isSupportedRequestId;
 
             beforeEach(() => {
@@ -129,19 +124,15 @@ describe('module', () => {
                     method: 'isSupported'
                 });
             });
-
         });
-
     });
 
     describe('with an additional implementation of a subtraction', () => {
-
         beforeEach(() => {
             worker = new Worker('base/test/fixtures/subtract-worker.js');
         });
 
         describe('connect()', () => {
-
             let connectRequestId;
             let ports;
 
@@ -150,7 +141,7 @@ describe('module', () => {
 
                 const messageChannel = new MessageChannel();
 
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
             });
 
             it('should connect a port', function (done) {
@@ -167,13 +158,14 @@ describe('module', () => {
                     done();
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should communicate via a connected port', function (done) {
@@ -187,7 +179,7 @@ describe('module', () => {
                 ports[1].addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
                         id: subtractRequestId,
-                        result: (minuend - subtrahend)
+                        result: minuend - subtrahend
                     });
 
                     done();
@@ -208,19 +200,18 @@ describe('module', () => {
                     });
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
-
         });
 
         describe('disconnect()', () => {
-
             let disconnectRequestId;
             let portId;
             let ports;
@@ -237,17 +228,18 @@ describe('module', () => {
                 const messageChannel = new MessageChannel();
 
                 disconnectRequestId = 823;
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
 
                 worker.addEventListener('message', eventListener);
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should disconnect a port', function (done) {
@@ -305,19 +297,15 @@ describe('module', () => {
                     params: { portId }
                 });
             });
-
         });
-
     });
 
     describe('with an additional implementation using transferables', () => {
-
         beforeEach(() => {
             worker = new Worker('base/test/fixtures/transfer-worker.js');
         });
 
         describe('connect()', () => {
-
             let connectRequestId;
             let ports;
 
@@ -326,7 +314,7 @@ describe('module', () => {
 
                 const messageChannel = new MessageChannel();
 
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
             });
 
             it('should connect a port', function (done) {
@@ -343,13 +331,14 @@ describe('module', () => {
                     done();
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should communicate via a connected port', function (done) {
@@ -387,19 +376,18 @@ describe('module', () => {
                     });
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
-
         });
 
         describe('disconnect()', () => {
-
             let disconnectRequestId;
             let portId;
             let ports;
@@ -416,17 +404,18 @@ describe('module', () => {
                 const messageChannel = new MessageChannel();
 
                 disconnectRequestId = 823;
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
 
                 worker.addEventListener('message', eventListener);
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should disconnect a port', function (done) {
@@ -483,19 +472,15 @@ describe('module', () => {
                     params: { portId }
                 });
             });
-
         });
-
     });
 
     describe('with an additional implementation without any params', () => {
-
         beforeEach(() => {
             worker = new Worker('base/test/fixtures/constant-worker.js');
         });
 
         describe('connect()', () => {
-
             let connectRequestId;
             let ports;
 
@@ -504,7 +489,7 @@ describe('module', () => {
 
                 const messageChannel = new MessageChannel();
 
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
             });
 
             it('should connect a port', function (done) {
@@ -521,13 +506,14 @@ describe('module', () => {
                     done();
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should communicate via a connected port', function (done) {
@@ -559,19 +545,18 @@ describe('module', () => {
                     });
                 });
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
-
         });
 
         describe('disconnect()', () => {
-
             let disconnectRequestId;
             let portId;
             let ports;
@@ -588,17 +573,18 @@ describe('module', () => {
                 const messageChannel = new MessageChannel();
 
                 disconnectRequestId = 823;
-                ports = [ messageChannel.port1, messageChannel.port2 ];
+                ports = [messageChannel.port1, messageChannel.port2];
 
                 worker.addEventListener('message', eventListener);
 
-                worker.postMessage({
-                    id: connectRequestId,
-                    method: 'connect',
-                    params: { port: ports[0] }
-                }, [
-                    ports[0]
-                ]);
+                worker.postMessage(
+                    {
+                        id: connectRequestId,
+                        method: 'connect',
+                        params: { port: ports[0] }
+                    },
+                    [ports[0]]
+                );
             });
 
             it('should disconnect a port', function (done) {
@@ -653,19 +639,15 @@ describe('module', () => {
                     params: { portId }
                 });
             });
-
         });
-
     });
 
     describe('with an additional implementation with an unsupported worker', () => {
-
         beforeEach(() => {
             worker = new Worker('base/test/fixtures/unsupported-worker.js');
         });
 
         describe('isSupported()', () => {
-
             let isSupportedRequestId;
 
             beforeEach(() => {
@@ -689,9 +671,6 @@ describe('module', () => {
                     method: 'isSupported'
                 });
             });
-
         });
-
     });
-
 });

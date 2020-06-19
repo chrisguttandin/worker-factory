@@ -2,7 +2,6 @@ import { createMessageHandler } from '../../../src/helpers/create-message-handle
 import { spy } from 'sinon';
 
 describe('createMessageHandler', () => {
-
     let receiver;
 
     after((done) => {
@@ -15,15 +14,13 @@ describe('createMessageHandler', () => {
     });
 
     describe('without any implementation', () => {
-
         let messageHandler;
 
         beforeEach(() => {
-            messageHandler = createMessageHandler(receiver, { });
+            messageHandler = createMessageHandler(receiver, {});
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
@@ -33,16 +30,13 @@ describe('createMessageHandler', () => {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
                     },
-	                id: null
+                    id: null
                 });
             });
-
         });
-
     });
 
     describe('with a synchronous broken implementation', () => {
-
         let messageHandler;
 
         beforeEach(() => {
@@ -55,7 +49,6 @@ describe('createMessageHandler', () => {
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
@@ -65,14 +58,12 @@ describe('createMessageHandler', () => {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
                     },
-	                id: null
+                    id: null
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id: null, method: 'fail' } });
 
@@ -82,16 +73,13 @@ describe('createMessageHandler', () => {
                         code: -32603,
                         message: 'This is a random error message.'
                     },
-	                id: null
+                    id: null
                 });
             });
-
         });
-
     });
 
     describe('with an asynchronous broken implementation', () => {
-
         let messageHandler;
 
         beforeEach(() => {
@@ -105,7 +93,6 @@ describe('createMessageHandler', () => {
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', async () => {
                 await messageHandler({ data: { id: null, method: 'explode' } });
 
@@ -118,11 +105,9 @@ describe('createMessageHandler', () => {
                     id: null
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with an error', async () => {
                 await messageHandler({ data: { id: null, method: 'fail' } });
 
@@ -135,13 +120,10 @@ describe('createMessageHandler', () => {
                     id: null
                 });
             });
-
         });
-
     });
 
     describe('with a notification implementation', () => {
-
         let messageHandler;
 
         beforeEach(() => {
@@ -155,7 +137,6 @@ describe('createMessageHandler', () => {
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
@@ -165,26 +146,21 @@ describe('createMessageHandler', () => {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
                     },
-	                id: null
+                    id: null
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should not call postMessage', () => {
                 messageHandler({ data: { id: null, method: 'accept' } });
 
                 expect(receiver.postMessage).to.have.not.been.called;
             });
-
         });
-
     });
 
     describe('with a chatty notification implementation', () => {
-
         let messageHandler;
 
         beforeEach(() => {
@@ -198,7 +174,6 @@ describe('createMessageHandler', () => {
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
@@ -208,14 +183,12 @@ describe('createMessageHandler', () => {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
                     },
-	                id: null
+                    id: null
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id: null, method: 'respond' } });
 
@@ -225,16 +198,13 @@ describe('createMessageHandler', () => {
                         code: -32603,
                         message: 'The handler of the method called "respond" returned an unexpected result.'
                     },
-	                id: null
+                    id: null
                 });
             });
-
         });
-
     });
 
     describe('with a synchronous request implementation', () => {
-
         let id;
         let messageHandler;
 
@@ -245,13 +215,12 @@ describe('createMessageHandler', () => {
                 respond: () => {
                     // Return an expected result.
 
-                    return { result: 'anything', transferables: [ 'anything' ] };
+                    return { result: 'anything', transferables: ['anything'] };
                 }
             });
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
@@ -264,31 +233,29 @@ describe('createMessageHandler', () => {
                     id
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with the result', (done) => {
                 messageHandler({ data: { id, method: 'respond' } });
 
                 setTimeout(() => {
                     expect(receiver.postMessage).to.have.been.calledOnce;
-                    expect(receiver.postMessage).to.have.been.calledWithExactly({
-                        id,
-                        result: 'anything'
-                    }, [ 'anything' ]);
+                    expect(receiver.postMessage).to.have.been.calledWithExactly(
+                        {
+                            id,
+                            result: 'anything'
+                        },
+                        ['anything']
+                    );
 
                     done();
                 });
             });
-
         });
-
     });
 
     describe('with an asynchronous request implementation', () => {
-
         let id;
         let messageHandler;
 
@@ -299,13 +266,12 @@ describe('createMessageHandler', () => {
                 delay: () => {
                     // Return an expected result wrapped in a promise.
 
-                    return Promise.resolve({ result: 'anything', transferables: [ 'anything' ] });
+                    return Promise.resolve({ result: 'anything', transferables: ['anything'] });
                 }
             });
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
@@ -318,31 +284,29 @@ describe('createMessageHandler', () => {
                     id
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with the result', (done) => {
                 messageHandler({ data: { id, method: 'delay' } });
 
                 setTimeout(() => {
                     expect(receiver.postMessage).to.have.been.calledOnce;
-                    expect(receiver.postMessage).to.have.been.calledWithExactly({
-                        id,
-                        result: 'anything'
-                    }, [ 'anything' ]);
+                    expect(receiver.postMessage).to.have.been.calledWithExactly(
+                        {
+                            id,
+                            result: 'anything'
+                        },
+                        ['anything']
+                    );
 
                     done();
                 });
             });
-
         });
-
     });
 
     describe('with a synchronous but silent request implementation', () => {
-
         let id;
         let messageHandler;
 
@@ -359,7 +323,6 @@ describe('createMessageHandler', () => {
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
@@ -372,11 +335,9 @@ describe('createMessageHandler', () => {
                     id
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id, method: 'swallow' } });
 
@@ -389,13 +350,10 @@ describe('createMessageHandler', () => {
                     id
                 });
             });
-
         });
-
     });
 
     describe('with an asynchronous but silent request implementation', () => {
-
         let id;
         let messageHandler;
 
@@ -412,7 +370,6 @@ describe('createMessageHandler', () => {
         });
 
         describe('with an unknown message', () => {
-
             it('should call postMessage with an error', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
@@ -425,11 +382,9 @@ describe('createMessageHandler', () => {
                     id
                 });
             });
-
         });
 
         describe('with a known message', () => {
-
             it('should call postMessage with an error', (done) => {
                 messageHandler({ data: { id, method: 'swallow' } });
 
@@ -446,9 +401,6 @@ describe('createMessageHandler', () => {
                     done();
                 });
             });
-
         });
-
     });
-
 });

@@ -37,7 +37,7 @@ module.exports = (config) => {
                 included: false,
                 pattern: 'test/fixtures/**',
                 served: true,
-                watched: false
+                watched: true
             },
             {
                 included: false,

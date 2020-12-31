@@ -14,7 +14,8 @@ jobs:
 
         strategy:
             matrix:
-                node-version: [10.x, 12.x, 14.x, 15.x]
+                node-version: [14.x]
+                target: [chrome, firefox, safari]
                 type: [integration, unit]
 
         steps:

@@ -14,10 +14,7 @@ module.exports = (config) => {
                 evaluate: {
                     // This is basically a part of the functionality which karma-sinon-chai would provide in a Window.
                     beforeRun: `(function(self) {
-                        self.should = null;
-                        self.should = self.chai.should();
                         self.expect = self.chai.expect;
-                        self.assert = self.chai.assert;
                     })(self);`
                 },
                 pattern: ['**/chai/**', '**/leche/**', '**/lolex/**', '**/sinon/**', '**/sinon-chai/**', 'test/unit/**/*.js']
@@ -48,10 +45,6 @@ module.exports = (config) => {
         ],
 
         frameworks: ['mocha-webworker', 'sinon-chai'],
-
-        mime: {
-            'text/x-typescript': ['ts', 'tsx']
-        },
 
         preprocessors: {
             'test/fixtures/**/*.js': 'webpack',
@@ -91,7 +84,7 @@ module.exports = (config) => {
         config.set({
             browserStack: {
                 accessKey: env.BROWSER_STACK_ACCESS_KEY,
-                build: `${env.GITHUB_RUN_ID}/integration-${env.TARGET}`,
+                build: `${env.GITHUB_RUN_ID}/unit-${env.TARGET}`,
                 forceLocal: true,
                 localIdentifier: `${Math.floor(Math.random() * 1000000)}`,
                 project: env.GITHUB_REPOSITORY,
@@ -123,7 +116,7 @@ module.exports = (config) => {
                     browser: 'firefox',
                     captureTimeout: 300,
                     os: 'Windows',
-                    os_version: '10' // eslint-disable-line camelcase
+                    os_version: 10 // eslint-disable-line camelcase
                 },
                 SafariBrowserStack: {
                     base: 'BrowserStack',

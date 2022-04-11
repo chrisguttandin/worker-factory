@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.17.9",
-        "compilerr": "^9.0.13",
+        "compilerr": "^9.0.14",
         "fast-unique-numbers": "^6.0.13",
         "tslib": "^2.3.1"
     },

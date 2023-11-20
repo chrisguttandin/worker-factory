@@ -3,11 +3,6 @@ import { spy } from 'sinon';
 describe('module', () => {
     let worker;
 
-    after((done) => {
-        // @todo This is an optimistic fix to prevent the famous 'Some of your tests did a full page reload!' error.
-        setTimeout(done, 1000);
-    });
-
     describe('with the default implementation', () => {
         beforeEach(() => {
             worker = new Worker('base/test/fixtures/default-worker.js');

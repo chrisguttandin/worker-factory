@@ -1,4 +1,3 @@
-import { IAugmentedError } from 'compilerr';
 import { IBrokerEvent, IErrorNotification, IErrorResponse, IReceiver, IRequest, IWorkerDefinition } from '../interfaces';
 import { TMessageReceiverWithParams, TMessageReceiverWithoutParams, TWorkerImplementation } from '../types';
 import { renderMethodNotFoundError, renderMissingResponseError, renderUnexpectedResultError } from './error-renderers';
@@ -9,7 +8,7 @@ export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IRec
 
         try {
             if (messageHandler === undefined) {
-                throw renderMethodNotFoundError({ method });
+                throw renderMethodNotFoundError(method);
             }
 
             const response =
@@ -18,18 +17,18 @@ export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IRec
                     : (messageHandler as TMessageReceiverWithParams<T[typeof method]['params'], T[typeof method]['response']>)(params);
 
             if (response === undefined) {
-                throw renderMissingResponseError({ method });
+                throw renderMissingResponseError(method);
             }
 
             const synchronousResponse = response instanceof Promise ? await response : response;
 
             if (id === null) {
                 if (synchronousResponse.result !== undefined) {
-                    throw renderUnexpectedResultError({ method });
+                    throw renderUnexpectedResultError(method);
                 }
             } else {
                 if (synchronousResponse.result === undefined) {
-                    throw renderUnexpectedResultError({ method });
+                    throw renderUnexpectedResultError(method);
                 }
 
                 const { result, transferables = [] } = <IRequest['response']>synchronousResponse;
@@ -37,7 +36,7 @@ export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IRec
                 receiver.postMessage({ id, result }, transferables);
             }
         } catch (err) {
-            const { message, status = -32603 } = <IAugmentedError>err;
+            const { message, status = -32603 } = err;
 
             receiver.postMessage(<IErrorNotification | IErrorResponse>{ error: { code: status, message }, id });
         }

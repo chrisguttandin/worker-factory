@@ -30,7 +30,7 @@ export const extendWorkerImplementation = <T extends IWorkerDefinition>(
         const destroyWorker = DESTROY_WORKER_FUNCTIONS.get(portId);
 
         if (destroyWorker === undefined) {
-            throw renderUnknownPortIdError({ portId: portId.toString() });
+            throw renderUnknownPortIdError(portId);
         }
 
         destroyWorker();

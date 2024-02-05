@@ -1,5 +1,5 @@
 import { IValueMap } from '../interfaces';
 
-export type TValueMap<T extends IValueMap = IValueMap> = {
-    [P in keyof T]: T[P];
+export type TValueMap<ValueMap extends IValueMap = IValueMap> = {
+    [P in keyof ValueMap]: ValueMap[P];
 };

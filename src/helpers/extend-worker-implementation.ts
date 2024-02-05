@@ -6,11 +6,11 @@ import { isSupportingTransferables } from './is-supporting-transferables';
 
 const DESTROY_WORKER_FUNCTIONS: Map<number, TDestroyWorkerFunction> = new Map();
 
-export const extendWorkerImplementation = <T extends IWorkerDefinition>(
-    createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => TDestroyWorkerFunction,
-    partialWorkerImplementation: TWorkerImplementation<T>,
+export const extendWorkerImplementation = <WorkerDefinition extends IWorkerDefinition>(
+    createWorker: (receiver: IReceiver, workerImplementation: TWorkerImplementation<WorkerDefinition>) => TDestroyWorkerFunction,
+    partialWorkerImplementation: TWorkerImplementation<WorkerDefinition>,
     isSupportedFunction: () => boolean | Promise<boolean>
-): TWorkerImplementation<T> & TWorkerImplementation<IDefaultWorkerDefinition> => ({
+): TWorkerImplementation<WorkerDefinition> & TWorkerImplementation<IDefaultWorkerDefinition> => ({
     ...partialWorkerImplementation,
     connect: ({ port }) => {
         port.start();

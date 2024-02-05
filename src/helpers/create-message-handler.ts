@@ -2,8 +2,11 @@ import { IBrokerEvent, IErrorNotification, IErrorResponse, IReceiver, IRequest, 
 import { TMessageReceiverWithParams, TMessageReceiverWithoutParams, TWorkerImplementation } from '../types';
 import { renderMethodNotFoundError, renderMissingResponseError, renderUnexpectedResultError } from './error-renderers';
 
-export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IReceiver, workerImplementation: TWorkerImplementation<T>) => {
-    return async ({ data: { id, method, params } }: IBrokerEvent<T>) => {
+export const createMessageHandler = <WorkerDefinition extends IWorkerDefinition>(
+    receiver: IReceiver,
+    workerImplementation: TWorkerImplementation<WorkerDefinition>
+) => {
+    return async ({ data: { id, method, params } }: IBrokerEvent<WorkerDefinition>) => {
         const messageHandler = workerImplementation[method];
 
         try {
@@ -13,8 +16,13 @@ export const createMessageHandler = <T extends IWorkerDefinition>(receiver: IRec
 
             const response =
                 params === undefined
-                    ? (messageHandler as TMessageReceiverWithoutParams<T[typeof method]['response']>)()
-                    : (messageHandler as TMessageReceiverWithParams<T[typeof method]['params'], T[typeof method]['response']>)(params);
+                    ? (messageHandler as TMessageReceiverWithoutParams<WorkerDefinition[typeof method]['response']>)()
+                    : (
+                          messageHandler as TMessageReceiverWithParams<
+                              WorkerDefinition[typeof method]['params'],
+                              WorkerDefinition[typeof method]['response']
+                          >
+                      )(params);
 
             if (response === undefined) {
                 throw renderMissingResponseError(method);

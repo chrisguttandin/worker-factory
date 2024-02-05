@@ -11,12 +11,12 @@ import { TDestroyWorkerFunction, TWorkerImplementation } from './types';
 export * from './interfaces/index';
 export * from './types/index';
 
-export const createWorker = <T extends IWorkerDefinition>(
+export const createWorker = <WorkerDefinition extends IWorkerDefinition>(
     receiver: IReceiver,
-    workerImplementation: TWorkerImplementation<T>,
+    workerImplementation: TWorkerImplementation<WorkerDefinition>,
     isSupportedFunction: () => boolean | Promise<boolean> = () => true
 ): TDestroyWorkerFunction => {
-    const fullWorkerImplementation = extendWorkerImplementation<T>(createWorker, workerImplementation, isSupportedFunction);
+    const fullWorkerImplementation = extendWorkerImplementation<WorkerDefinition>(createWorker, workerImplementation, isSupportedFunction);
     const messageHandler = createMessageHandler(receiver, fullWorkerImplementation);
 
     receiver.addEventListener('message', messageHandler);

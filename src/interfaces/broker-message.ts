@@ -1,9 +1,9 @@
 import { IWorkerDefinition } from './worker-definition';
 
-export interface IBrokerMessage<T extends IWorkerDefinition> {
+export interface IBrokerMessage<WorkerDefinition extends IWorkerDefinition> {
     id: null | number;
 
-    method: Extract<keyof T, string>;
+    method: Extract<keyof WorkerDefinition, string>;
 
-    params: T[Extract<keyof T, string>]['params'];
+    params: WorkerDefinition[Extract<keyof WorkerDefinition, string>]['params'];
 }

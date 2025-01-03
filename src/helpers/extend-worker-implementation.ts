@@ -12,7 +12,7 @@ export const extendWorkerImplementation = <WorkerDefinition extends IWorkerDefin
     isSupportedFunction: () => boolean | Promise<boolean>
 ): TWorkerImplementation<WorkerDefinition> & TWorkerImplementation<IDefaultWorkerDefinition> => ({
     ...partialWorkerImplementation,
-    connect: ({ port }) => {
+    connect: ({ port }: { port: MessagePort }) => {
         port.start();
 
         const destroyWorker = createWorker(port, partialWorkerImplementation);
@@ -26,7 +26,7 @@ export const extendWorkerImplementation = <WorkerDefinition extends IWorkerDefin
 
         return { result: portId };
     },
-    disconnect: ({ portId }) => {
+    disconnect: ({ portId }: { portId: number }) => {
         const destroyWorker = DESTROY_WORKER_FUNCTIONS.get(portId);
 
         if (destroyWorker === undefined) {

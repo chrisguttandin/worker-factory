@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { createWorker } from '../../../src/module';
 import { extendWorkerImplementation } from '../../../src/helpers/extend-worker-implementation';
 

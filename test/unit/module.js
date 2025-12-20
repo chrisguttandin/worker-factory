@@ -1,15 +1,16 @@
-import * as workerFactory from '../../src/module';
+import { createWorker, isSupported } from '../../src/module';
+import { describe, expect, it } from 'vitest';
 
 describe('module', () => {
     describe('createWorker()', () => {
         it('should export a function', () => {
-            expect(workerFactory.createWorker).to.be.a('function');
+            expect(createWorker).to.be.a('function');
         });
     });
 
     describe('isSupported()', () => {
         it('should export a function', () => {
-            expect(workerFactory.isSupported).to.be.a('function');
+            expect(isSupported).to.be.a('function');
         });
     });
 });

@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { spy } from 'sinon';
 
 describe('module', () => {
@@ -5,7 +6,7 @@ describe('module', () => {
 
     describe('with the default implementation', () => {
         beforeEach(() => {
-            worker = new Worker('base/test/fixtures/default-worker.js');
+            worker = new Worker(new URL('../fixtures/default-worker', import.meta.url), { type: 'module' });
         });
 
         describe('connect()', () => {
@@ -20,8 +21,8 @@ describe('module', () => {
                 ports = [messageChannel.port1, messageChannel.port2];
             });
 
-            it('should connect a port', function (done) {
-                this.timeout(6000);
+            it('should connect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data.result).to.be.a('number');
@@ -31,7 +32,7 @@ describe('module', () => {
                         result: data.result
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage(
@@ -42,6 +43,8 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
         });
 
@@ -49,14 +52,15 @@ describe('module', () => {
             let disconnectRequestId;
             let portId;
 
-            beforeEach((done) => {
+            beforeEach(() => {
+                const { promise, resolve } = Promise.withResolvers();
                 const connectRequestId = 723;
                 const eventListener = ({ data }) => {
                     worker.removeEventListener('message', eventListener);
 
                     portId = data.result;
 
-                    done();
+                    resolve();
                 };
                 const messageChannel = new MessageChannel();
                 const ports = [messageChannel.port1, messageChannel.port2];
@@ -73,10 +77,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should disconnect a port', function (done) {
-                this.timeout(6000);
+            it('should disconnect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
@@ -84,7 +90,7 @@ describe('module', () => {
                         result: null
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage({
@@ -92,6 +98,8 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
         });
 
@@ -102,8 +110,8 @@ describe('module', () => {
                 isSupportedRequestId = 2123;
             });
 
-            it('should return true', function (done) {
-                this.timeout(6000);
+            it('should return true', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
@@ -111,20 +119,22 @@ describe('module', () => {
                         result: true
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage({
                     id: isSupportedRequestId,
                     method: 'isSupported'
                 });
+
+                return promise;
             });
         });
     });
 
     describe('with an additional implementation of a subtraction', () => {
         beforeEach(() => {
-            worker = new Worker('base/test/fixtures/subtract-worker.js');
+            worker = new Worker(new URL('../fixtures/subtract-worker', import.meta.url), { type: 'module' });
         });
 
         describe('connect()', () => {
@@ -139,8 +149,8 @@ describe('module', () => {
                 ports = [messageChannel.port1, messageChannel.port2];
             });
 
-            it('should connect a port', function (done) {
-                this.timeout(6000);
+            it('should connect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data.result).to.be.a('number');
@@ -150,7 +160,7 @@ describe('module', () => {
                         result: data.result
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage(
@@ -161,11 +171,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should communicate via a connected port', function (done) {
-                this.timeout(6000);
-
+            it('should communicate via a connected port', () => {
+                const { promise, resolve } = Promise.withResolvers();
                 const minuend = 178;
                 const subtractRequestId = 1982;
                 const subtrahend = 67;
@@ -177,7 +188,7 @@ describe('module', () => {
                         result: minuend - subtrahend
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.addEventListener('message', ({ data }) => {
@@ -203,6 +214,8 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
         });
 
@@ -211,14 +224,15 @@ describe('module', () => {
             let portId;
             let ports;
 
-            beforeEach((done) => {
+            beforeEach(() => {
+                const { promise, resolve } = Promise.withResolvers();
                 const connectRequestId = 723;
                 const eventListener = ({ data }) => {
                     worker.removeEventListener('message', eventListener);
 
                     portId = data.result;
 
-                    done();
+                    resolve();
                 };
                 const messageChannel = new MessageChannel();
 
@@ -235,10 +249,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should disconnect a port', function (done) {
-                this.timeout(6000);
+            it('should disconnect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
@@ -246,7 +262,7 @@ describe('module', () => {
                         result: null
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage({
@@ -254,11 +270,12 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
 
-            it('should not communicate via a disconnected port', function (done) {
-                this.timeout(6000);
-
+            it('should not communicate via a disconnected port', () => {
+                const { promise, resolve } = Promise.withResolvers();
                 const minuend = 178;
                 const portMessageListener = spy();
                 const subtractRequestId = 1982;
@@ -282,7 +299,7 @@ describe('module', () => {
                     setTimeout(() => {
                         expect(portMessageListener).to.have.not.been.called;
 
-                        done();
+                        resolve();
                     }, 1000);
                 });
 
@@ -291,13 +308,15 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
         });
     });
 
     describe('with an additional implementation using transferables', () => {
         beforeEach(() => {
-            worker = new Worker('base/test/fixtures/transfer-worker.js');
+            worker = new Worker(new URL('../fixtures/transfer-worker', import.meta.url), { type: 'module' });
         });
 
         describe('connect()', () => {
@@ -312,8 +331,8 @@ describe('module', () => {
                 ports = [messageChannel.port1, messageChannel.port2];
             });
 
-            it('should connect a port', function (done) {
-                this.timeout(6000);
+            it('should connect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data.result).to.be.a('number');
@@ -323,7 +342,7 @@ describe('module', () => {
                         result: data.result
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage(
@@ -334,11 +353,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should communicate via a connected port', function (done) {
-                this.timeout(6000);
-
+            it('should communicate via a connected port', () => {
+                const { promise, resolve } = Promise.withResolvers();
                 const arrayBuffer = new ArrayBuffer(32);
                 const transferRequestId = 1982;
 
@@ -353,7 +373,7 @@ describe('module', () => {
                         result
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.addEventListener('message', ({ data }) => {
@@ -379,6 +399,8 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
         });
 
@@ -387,14 +409,15 @@ describe('module', () => {
             let portId;
             let ports;
 
-            beforeEach((done) => {
+            beforeEach(() => {
+                const { promise, resolve } = Promise.withResolvers();
                 const connectRequestId = 723;
                 const eventListener = ({ data }) => {
                     worker.removeEventListener('message', eventListener);
 
                     portId = data.result;
 
-                    done();
+                    resolve();
                 };
                 const messageChannel = new MessageChannel();
 
@@ -411,10 +434,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should disconnect a port', function (done) {
-                this.timeout(6000);
+            it('should disconnect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
@@ -422,7 +447,7 @@ describe('module', () => {
                         result: null
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage({
@@ -430,11 +455,12 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
 
-            it('should not communicate via a disconnected port', function (done) {
-                this.timeout(6000);
-
+            it('should not communicate via a disconnected port', () => {
+                const { promise, resolve } = Promise.withResolvers();
                 const arrayBuffer = new ArrayBuffer(32);
                 const portMessageListener = spy();
                 const transferRequestId = 1982;
@@ -457,7 +483,7 @@ describe('module', () => {
                     setTimeout(() => {
                         expect(portMessageListener).to.have.not.been.called;
 
-                        done();
+                        resolve();
                     }, 1000);
                 });
 
@@ -466,13 +492,15 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
         });
     });
 
     describe('with an additional implementation without any params', () => {
         beforeEach(() => {
-            worker = new Worker('base/test/fixtures/constant-worker.js');
+            worker = new Worker(new URL('../fixtures/constant-worker', import.meta.url), { type: 'module' });
         });
 
         describe('connect()', () => {
@@ -487,8 +515,8 @@ describe('module', () => {
                 ports = [messageChannel.port1, messageChannel.port2];
             });
 
-            it('should connect a port', function (done) {
-                this.timeout(6000);
+            it('should connect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data.result).to.be.a('number');
@@ -498,7 +526,7 @@ describe('module', () => {
                         result: data.result
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage(
@@ -509,11 +537,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should communicate via a connected port', function (done) {
-                this.timeout(6000);
-
+            it('should communicate via a connected port', () => {
+                const { promise, resolve } = Promise.withResolvers();
                 const askRequestId = 1982;
 
                 ports[1].start();
@@ -523,7 +552,7 @@ describe('module', () => {
                         result: 42
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.addEventListener('message', ({ data }) => {
@@ -548,6 +577,8 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
         });
 
@@ -556,14 +587,15 @@ describe('module', () => {
             let portId;
             let ports;
 
-            beforeEach((done) => {
+            beforeEach(() => {
+                const { promise, resolve } = Promise.withResolvers();
                 const connectRequestId = 723;
                 const eventListener = ({ data }) => {
                     worker.removeEventListener('message', eventListener);
 
                     portId = data.result;
 
-                    done();
+                    resolve();
                 };
                 const messageChannel = new MessageChannel();
 
@@ -580,10 +612,12 @@ describe('module', () => {
                     },
                     [ports[0]]
                 );
+
+                return promise;
             });
 
-            it('should disconnect a port', function (done) {
-                this.timeout(6000);
+            it('should disconnect a port', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
@@ -591,7 +625,7 @@ describe('module', () => {
                         result: null
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage({
@@ -599,11 +633,12 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
 
-            it('should not communicate via a disconnected port', function (done) {
-                this.timeout(6000);
-
+            it('should not communicate via a disconnected port', () => {
+                const { promise, resolve } = Promise.withResolvers();
                 const askRequestId = 1982;
                 const portMessageListener = spy();
 
@@ -624,7 +659,7 @@ describe('module', () => {
                     setTimeout(() => {
                         expect(portMessageListener).to.have.not.been.called;
 
-                        done();
+                        resolve();
                     }, 1000);
                 });
 
@@ -633,13 +668,15 @@ describe('module', () => {
                     method: 'disconnect',
                     params: { portId }
                 });
+
+                return promise;
             });
         });
     });
 
     describe('with an additional implementation with an unsupported worker', () => {
         beforeEach(() => {
-            worker = new Worker('base/test/fixtures/unsupported-worker.js');
+            worker = new Worker(new URL('../fixtures/unsupported-worker', import.meta.url), { type: 'module' });
         });
 
         describe('isSupported()', () => {
@@ -649,8 +686,8 @@ describe('module', () => {
                 isSupportedRequestId = 2123;
             });
 
-            it('should return a false', function (done) {
-                this.timeout(6000);
+            it('should return a false', () => {
+                const { promise, resolve } = Promise.withResolvers();
 
                 worker.addEventListener('message', ({ data }) => {
                     expect(data).to.deep.equal({
@@ -658,13 +695,15 @@ describe('module', () => {
                         result: false
                     });
 
-                    done();
+                    resolve();
                 });
 
                 worker.postMessage({
                     id: isSupportedRequestId,
                     method: 'isSupported'
                 });
+
+                return promise;
             });
         });
     });

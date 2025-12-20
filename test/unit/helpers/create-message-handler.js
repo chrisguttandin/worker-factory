@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest';
 import { createMessageHandler } from '../../../src/helpers/create-message-handler';
 import { spy } from 'sinon';
 
@@ -231,7 +232,9 @@ describe('createMessageHandler', () => {
         });
 
         describe('with a known message', () => {
-            it('should call postMessage with the result', (done) => {
+            it('should call postMessage with the result', () => {
+                const { promise, resolve } = Promise.withResolvers();
+
                 messageHandler({ data: { id, method: 'respond' } });
 
                 setTimeout(() => {
@@ -244,8 +247,10 @@ describe('createMessageHandler', () => {
                         ['anything']
                     );
 
-                    done();
+                    resolve();
                 });
+
+                return promise;
             });
         });
     });
@@ -282,7 +287,9 @@ describe('createMessageHandler', () => {
         });
 
         describe('with a known message', () => {
-            it('should call postMessage with the result', (done) => {
+            it('should call postMessage with the result', () => {
+                const { promise, resolve } = Promise.withResolvers();
+
                 messageHandler({ data: { id, method: 'delay' } });
 
                 setTimeout(() => {
@@ -295,8 +302,10 @@ describe('createMessageHandler', () => {
                         ['anything']
                     );
 
-                    done();
+                    resolve();
                 });
+
+                return promise;
             });
         });
     });
@@ -380,7 +389,9 @@ describe('createMessageHandler', () => {
         });
 
         describe('with a known message', () => {
-            it('should call postMessage with an error', (done) => {
+            it('should call postMessage with an error', () => {
+                const { promise, resolve } = Promise.withResolvers();
+
                 messageHandler({ data: { id, method: 'swallow' } });
 
                 setTimeout(() => {
@@ -393,8 +404,10 @@ describe('createMessageHandler', () => {
                         id
                     });
 
-                    done();
+                    resolve();
                 });
+
+                return promise;
             });
         });
     });

@@ -33,7 +33,7 @@
         "memory-fs": "^0.5.0",
         "prettier": "^3.7.4",
         "rimraf": "^6.1.2",
-        "rollup": "^4.53.5",
+        "rollup": "^4.55.1",
         "sinon": "^21.0.1",
         "sinon-chai": "^4.0.1",
         "tsconfig-holy-grail": "^15.0.2",

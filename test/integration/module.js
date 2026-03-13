@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
-import { spy } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('module', () => {
     let worker;
@@ -277,7 +276,7 @@ describe('module', () => {
             it('should not communicate via a disconnected port', () => {
                 const { promise, resolve } = Promise.withResolvers();
                 const minuend = 178;
-                const portMessageListener = spy();
+                const portMessageListener = vi.fn();
                 const subtractRequestId = 1982;
                 const subtrahend = 67;
 
@@ -462,7 +461,7 @@ describe('module', () => {
             it('should not communicate via a disconnected port', () => {
                 const { promise, resolve } = Promise.withResolvers();
                 const arrayBuffer = new ArrayBuffer(32);
-                const portMessageListener = spy();
+                const portMessageListener = vi.fn();
                 const transferRequestId = 1982;
 
                 ports[1].start();
@@ -640,7 +639,7 @@ describe('module', () => {
             it('should not communicate via a disconnected port', () => {
                 const { promise, resolve } = Promise.withResolvers();
                 const askRequestId = 1982;
-                const portMessageListener = spy();
+                const portMessageListener = vi.fn();
 
                 ports[1].start();
                 ports[1].addEventListener('message', portMessageListener);

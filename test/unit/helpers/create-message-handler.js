@@ -1,12 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMessageHandler } from '../../../src/helpers/create-message-handler';
-import { spy } from 'sinon';
 
 describe('createMessageHandler', () => {
     let receiver;
 
     beforeEach(() => {
-        receiver = { postMessage: spy() };
+        receiver = { postMessage: vi.fn() };
     });
 
     describe('without any implementation', () => {
@@ -21,7 +20,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -49,7 +48,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -64,7 +63,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id: null, method: 'fail' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32603,
                         message: 'This is a random error message.'
@@ -93,7 +92,7 @@ describe('createMessageHandler', () => {
                 await messageHandler({ data: { id: null, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -108,7 +107,7 @@ describe('createMessageHandler', () => {
                 await messageHandler({ data: { id: null, method: 'fail' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32603,
                         message: 'This is a random error message.'
@@ -137,7 +136,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -174,7 +173,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id: null, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -189,7 +188,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id: null, method: 'respond' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32603,
                         message: 'The handler of the method called "respond" returned an unexpected result.'
@@ -221,7 +220,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -239,7 +238,7 @@ describe('createMessageHandler', () => {
 
                 setTimeout(() => {
                     expect(receiver.postMessage).to.have.been.calledOnce;
-                    expect(receiver.postMessage).to.have.been.calledWithExactly(
+                    expect(receiver.postMessage).to.have.been.calledWith(
                         {
                             id,
                             result: 'anything'
@@ -276,7 +275,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -294,7 +293,7 @@ describe('createMessageHandler', () => {
 
                 setTimeout(() => {
                     expect(receiver.postMessage).to.have.been.calledOnce;
-                    expect(receiver.postMessage).to.have.been.calledWithExactly(
+                    expect(receiver.postMessage).to.have.been.calledWith(
                         {
                             id,
                             result: 'anything'
@@ -331,7 +330,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -346,7 +345,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id, method: 'swallow' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32603,
                         message: 'The handler of the method called "swallow" returned an unexpected result.'
@@ -378,7 +377,7 @@ describe('createMessageHandler', () => {
                 messageHandler({ data: { id, method: 'explode' } });
 
                 expect(receiver.postMessage).to.have.been.calledOnce;
-                expect(receiver.postMessage).to.have.been.calledWithExactly({
+                expect(receiver.postMessage).to.have.been.calledWith({
                     error: {
                         code: -32601,
                         message: 'The requested method called "explode" is not supported.'
@@ -396,7 +395,7 @@ describe('createMessageHandler', () => {
 
                 setTimeout(() => {
                     expect(receiver.postMessage).to.have.been.calledOnce;
-                    expect(receiver.postMessage).to.have.been.calledWithExactly({
+                    expect(receiver.postMessage).to.have.been.calledWith({
                         error: {
                             code: -32603,
                             message: 'The handler of the method called "swallow" returned an unexpected result.'
